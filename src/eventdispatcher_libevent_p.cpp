@@ -195,7 +195,11 @@ bool EventDispatcherLibEventPrivate::processEvents(QEventLoop::ProcessEventsFlag
 		for (int i=0; i<list.size(); ++i) {
 			const PendingEvent& e = list.at(i);
 			if (!e.first.isNull()) {
+#if QT_VERSION >= 0x050000
 				QCoreApplication::sendEvent(e.first, e.second);
+#else
+				QCoreApplication::sendEvent(e.first.data(), e.second);
+#endif
 			}
 		}
 

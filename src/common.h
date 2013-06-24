@@ -21,6 +21,7 @@
 #include <QtCore/QMultiHash>
 #include <QtCore/QPair>
 #include <QtCore/QPointer>
+#include <QtCore/QWeakPointer>
 #include <QtCore/QSocketNotifier>
 #include <QtCore/QThread>
 #include "qt4compat.h"

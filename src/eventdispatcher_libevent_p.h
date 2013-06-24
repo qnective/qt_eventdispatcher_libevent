@@ -42,7 +42,11 @@ public:
 
 	typedef QMultiHash<evutil_socket_t, SocketNotifierInfo> SocketNotifierHash;
 	typedef QHash<int, TimerInfo*> TimerHash;
+#if QT_VERSION >= 0x050000
 	typedef QPair<QPointer<QObject>, QEvent*> PendingEvent;
+#else
+	typedef QPair<QWeakPointer<QObject>, QEvent*> PendingEvent;
+#endif
 	typedef QList<PendingEvent> EventList;
 
 private:
