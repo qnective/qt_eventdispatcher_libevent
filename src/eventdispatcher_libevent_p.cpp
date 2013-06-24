@@ -4,6 +4,8 @@
 #include "eventdispatcher_libevent_config.h"
 #include "eventdispatcher_libevent_config_p.h"
 
+#include <time.h>
+
 #ifdef Q_OS_WIN
 Q_GLOBAL_STATIC(WSAInitializer, wsa_initializer)
 #endif
@@ -125,6 +127,21 @@ EventDispatcherLibEventPrivate::~EventDispatcherLibEventPrivate(void)
 	delete this->m_tco;
 }
 
+static inline timeval gettime()
+{
+	timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	const qint64 sec = ts.tv_sec;
+	const qint64 frac = ts.tv_nsec;
+
+	timeval tv;
+	tv.tv_sec = sec;
+	tv.tv_usec = frac;
+	tv.tv_usec /= 1000;
+
+	return tv;
+}
+
 /**
  * @brief Processes pending events that match @a flags until there are no more events to process
  * @param flags
@@ -203,9 +220,8 @@ bool EventDispatcherLibEventPrivate::processEvents(QEventLoop::ProcessEventsFlag
 			}
 		}
 
-		struct timeval now;
+		const struct timeval now = gettime();
 		struct timeval delta;
-		evutil_gettimeofday(&now, 0);
 
 		// Now that all event handlers have finished (and we returned from the recusrion), reactivate all pending timers
 		for (int i=0; i<list.size(); ++i) {
