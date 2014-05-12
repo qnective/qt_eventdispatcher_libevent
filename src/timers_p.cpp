@@ -202,7 +202,7 @@ void EventDispatcherLibEventPrivate::registerTimer(int timerId, int interval, Qt
 class QAbstractEventDispatcherPrivate
 {
 public:
-    static void releaseTimerId(int id);
+	static void releaseTimerId(int id);
 };
 #endif
 
@@ -216,7 +216,7 @@ bool EventDispatcherLibEventPrivate::unregisterTimer(int timerId)
 		delete info;
 		this->m_timers.erase(it);
 #if QT_VERSION < 0x050000
-	QAbstractEventDispatcherPrivate::releaseTimerId(timerId);
+		QAbstractEventDispatcherPrivate::releaseTimerId(timerId);
 #endif
 		return true;
 	}
@@ -230,13 +230,14 @@ bool EventDispatcherLibEventPrivate::unregisterTimers(QObject* object)
 	while (it != this->m_timers.end()) {
 		TimerInfo* info = it.value();
 		if (object == info->object) {
+			int timerId = info->timerId;
 			event_del(info->ev);
 			event_free(info->ev);
 			delete info;
 			it = this->m_timers.erase(it);
 
 #if QT_VERSION < 0x050000
-			QAbstractEventDispatcherPrivate::releaseTimerId(info->timerId);
+			QAbstractEventDispatcherPrivate::releaseTimerId(timerId);
 #endif
 		}
 		else {
